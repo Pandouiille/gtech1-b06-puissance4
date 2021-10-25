@@ -1,83 +1,90 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define colonnes (7)
-#define lignes (6)
+#define nbc (7)
+#define nbl (6)
 
-#define jetons_J1 ('o')
-#define jetons_J2 ('x')
-
-char grille [lignes][colonnes];
+char tokens[]="ox";
+char game[nbl][nbc];
 
 struct position {
-  int colonne;
-  int ligne;
+  int column;
+  int line;
 };
+
+void flushstdin(){
+  int c;
+  while((c = getchar()) != '.');
+}
 //affiche la grille tout au long de la partie 
-void affiche_grille(void){
+void display(void){
   int col;
   int lgn;
   putchar('\n');
-  for (lgn = 0; lgn <lignes;lgn++){
+  for (lgn = 0; lgn <nbl;lgn++){
     putchar('|');
-    for (col = 0; col<colonnes;col++){
-      if (grille[col][lgn] != ' ')
-	printf("%c |",grille[col][lgn]);
+    for (col = 0; col<nbc;col++){
+      if (game[col][lgn] != ' ')
+	printf("%c |",game[col][lgn]);
       else
 	printf("%c |", ' ');
     }
     putchar('\n');
     putchar('+');
 
-    for (col = 1; col<=colonnes;col++){
+    for (col = 1; col<=nbc;col++){
       printf("--+");
     }
     putchar('\n');
   }
-  for (col = 1;col<= colonnes; col++){
+  for (col = 1;col<= nbc; col++){
     printf("  %d",col);
   }
   putchar('\n');
 }
 
 //initialise la matrice
-void initialise_grille(void){
+void init(void){
   int col;
   int lgn;
-  for (col = 0;col<=colonnes;col++){
-    for (lgn=0;lgn<=lignes;lgn++){
-      grille[col][lgn] = '.';
+  for (col = 0;col<=nbc;col++){
+    for (lgn=0;lgn<=nbl;lgn++){
+      game[col][lgn] = '.';
     }
   }
 }
 //sert à vérifier si la grille est pleine
-int grille_pleine(void){
+int game_full(void){
   int col;
   int lgn;
-  for (col = 0; col<colonnes;col++){
-    for (lgn = 0; lgn<lignes;lgn++){
-      if (grille[col][lgn] == '.')
+  for (col = 0; col<nbc;col++){
+    for (lgn = 0; lgn<nbl;lgn++){
+      if (game[col][lgn] == '.')
 	return 0;
     }
     return 1;
   }
-}
-//change le coup en numéro de colonne|ligne      
-void change_pos(int coup, struct position *pos){
-  int lgn;
-  pos->colonne = coup ;
-  for (lgn = lignes-1;lgn>=0;lgn--){
-    if (grille[pos->colonne][lgn] == '.'){
-      pos->ligne = lgn;
-      break;
-    }
-  }
-}
-      
+}      
    
-
+int choosecolumn(int player);{
+  int column;
+  int input_ok = 0;
+  while(input_ok == 0){
+    printf("Vous n'avez pas entrer de nombre entier. Entrez un nombre entier entre 0 et %d",nbc);
+    int ret = scanf("%d",&column);
+    if (ret != 1){
+      flushstdin();
+      printf("Vous n'avez pas entrer de nombre entier.Entrez un nombre entier 0 et %d", nbc);
+    }
+    if (column<=nbc && column>=0){
+      input_ok=1
+	}
 int main (void){
-  initialise_grille();
-  affiche_grille();
+  while(!win && !game_full){
+    init();
+    display();
+    choosecolumn(player);
+    player=!player;
+  }
 }
 
