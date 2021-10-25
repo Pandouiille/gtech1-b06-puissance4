@@ -11,26 +11,23 @@ char token[]="ox";
 
 void init(void){
   
-  for(l=1;l<nbl;l++){
-    for(c=1;c<nbc;c++){
+  for(l=0;l<nbl;l++){
+    for(c=0;c<nbc;c++){
       game[l][c] = '.';
     }
   }
-  for(l=0;l<nbl;l++){
-    for(c=0;c<1;c++){
-      game[l][c]='|';
-    }
-  }
 
-
-  for(l=1;l<nbl;l++){                                                                                                                                                                                                                           printf("\n");                                                                                                                                                                                                                               for(c=1;c<nbc;c++){                                                                                                                                                                                                                           printf("%c ", game[l][c]);                                                                                                                                                                                                                 }
+  for(l=0;l<nbl;l++){                                                                                                                                                                                                                           printf("\n");                                                                                                                                                                                                                               for(c=0;c<nbc;c++){                                                                                                                                                                                                                           printf("%c ", game[l][c]);                                                                                                                                                                                                                 }
   }                                                                                                                                                                                                                                           printf("\n");
 }
 
 
-
+void flushstdin() {
+  int c;
+  while((c = getchar()) != '\n' && c != EOF)
+    ;
+    }
   
-
 
 void main(void){
 
@@ -47,8 +44,14 @@ void main(void){
     while player input is wrong, ask again the player to choose a column*/
     int input_ok=0;
     while (input_ok==0){
-      printf("Joueur%d choisissez une collonne entre 0 et 6\n",player);
+      printf("Joueur%d choisissez une collonne entre 0 et %d\n",player,nbc);
       int ret = scanf("\%d",&column);
+      if (ret == 0){
+	flushstdin();
+	printf("Vous n'avez pas entrer de nombre entier. Entrez un nombre entier entre 0 et %d",nbc);
+      }
+
+
       if(column<=nbc && column>=0){
 	input_ok=1;
       }
@@ -56,35 +59,31 @@ void main(void){
 	  input_ok=0;
 	}
     }
-    
-    printf("okaaay, let's gooo\n");
-        
+          
     //while the column is not full, check if token is present or not
     l=nbl;
-    while (l<0){
+    while(l>=0){
       if (game[l][column] == '.'){
 	game[l][column] = token[player];
-        l=-1;
-	
+	l=-1;   
       }
-      else if(game[l][column] != '.'){
+      while(game[l][column] != '.'){
 	l=l-1;
       }
-    }
+    }  
     //if column is full, ask player to choose an other column
-    if (l<0){
-	printf("colonne pleine, choisissez en une autre");
+    if (l==0){
+      printf("colonne pleine,choisissez en une autre");
     }
     
-    for(l=1;l<nbl;l++){
+    for(l=0;l<nbl;l++){
       printf("\n ");
-      for(c=1;c<nbc;c++){
+      for(c=0;c<nbc;c++){
 	printf("%c", game[l][c]);
       }
     }
     l=nbl;
-
-    
+    printf("\n");
   }
 
   printf("bienvenue dans le puissance4\n");
@@ -92,16 +91,9 @@ void main(void){
     while (!win && !game_full){
          
         
-    if(player){
-      choosecolumn(1);
-    }
-    else if (!player){
-	  choosecolumn(2);
-	}
-        else
-          printf("PTDR, t'est qui ?");
+      choosecolumn(player);	 
   
-    player=!player;
+      player=!player;
    
   }
 }
