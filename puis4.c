@@ -4,18 +4,15 @@
 #define nbc (7)
 #define nbl (6)
 
-char tokens[]="ox";
+char token[]="ox";
 char game[nbl][nbc];
-
-struct position {
-  int column;
-  int line;
-};
+int player = 1;
 
 void flushstdin(){
   int c;
-  while((c = getchar()) != '.');
+  while((c = getchar()) != '\n' && c != EOF);
 }
+
 //affiche la grille tout au long de la partie 
 void display(void){
   int col;
@@ -24,8 +21,8 @@ void display(void){
   for (lgn = 0; lgn <nbl;lgn++){
     putchar('|');
     for (col = 0; col<nbc;col++){
-      if (game[col][lgn] != ' ')
-	printf("%c |",game[col][lgn]);
+      if (game[lgn][col] != ' ')
+	printf("%c |",game[lgn][col]);
       else
 	printf("%c |", ' ');
     }
@@ -38,7 +35,7 @@ void display(void){
     putchar('\n');
   }
   for (col = 1;col<= nbc; col++){
-    printf("  %d",col);
+    printf(" %d ",col);
   }
   putchar('\n');
 }
@@ -47,41 +44,73 @@ void display(void){
 void init(void){
   int col;
   int lgn;
-  for (col = 0;col<=nbc;col++){
-    for (lgn=0;lgn<=nbl;lgn++){
-      game[col][lgn] = '.';
+  for (lgn = 0;lgn<nbl;lgn++){
+    for (col = 0;col<nbc;col++){
+      game[lgn][col] = '.';
     }
   }
 }
+
 //sert à vérifier si la grille est pleine
 int game_full(void){
   int col;
   int lgn;
-  for (col = 0; col<nbc;col++){
-    for (lgn = 0; lgn<nbl;lgn++){
-      if (game[col][lgn] == '.')
-	return 0;
+  for (lgn = 0; lgn<nbl;lgn++){
+    for (col = 0; col<nbc;col++){
+      if (game[lgn][col] == '.');
+	return 1;
     }
-    return 1;
+    return 0;
   }
 }      
    
-int choosecolumn(int player);{
-  int column;
+int choosecolumn(){
+  int l;
+  int column; 
   int input_ok = 0;
+  l = nbl;
   while(input_ok == 0){
-    printf("Vous n'avez pas entrer de nombre entier. Entrez un nombre entier entre 0 et %d",nbc);
+    printf("Joueur%d, entrez un nombre entier entre 0 et %d\n",player,nbc);
     int ret = scanf("%d",&column);
+    column = column - 1;
     if (ret != 1){
       flushstdin();
-      printf("Vous n'avez pas entrer de nombre entier.Entrez un nombre entier 0 et %d", nbc);
+      printf("Entrez un nombre entier 0 et %d\n", nbc);
     }
-    if (column<=nbc && column>=0){
-      input_ok=1
-	}
+    if (column<nbc && column>=0){
+      input_ok=1;
+    }
+    else {
+      input_ok=0;
+      printf("Cette colonne n'existe pas. Entrez une autre colonne entre 0 et %d\n", nbc);
+    }
+  }
+  while(l>=0){
+    if (game[l][column] == '.'){
+      game[l][column] = token[player];
+      break;
+    }
+    while(game[l][column] != '.'){
+      l=l-1;
+    }
+    if (l==0){
+      printf("Colonne plein\n");
+    }
+  }
+}
+
+
+  
+  
+	
+    
+  
+
 int main (void){
-  while(!win && !game_full){
-    init();
+  int win;
+  printf("Bienvenue au puissance 4\n");
+  init();
+  while (!win && (game_full) != 0){
     display();
     choosecolumn(player);
     player=!player;
